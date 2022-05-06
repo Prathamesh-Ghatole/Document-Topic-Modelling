@@ -10,4 +10,4 @@ Instructions:
         - Linux: ```env_mla\bin\activate```
     3. Install required repositories:
     ```pip install -r requirements.txt```
-    4. Run the code!
+4. Run the code!
