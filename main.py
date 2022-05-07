@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from lib.functions import *
 
 ###################
+# PART 1: Load Data from pickle, 
 
 # Load the list of documents
 with open('data/newsgroups', 'rb') as f:
@@ -29,6 +30,7 @@ corpus = gensim.matutils.Sparse2Corpus(X, documents_columns=False)
 id_map = dict((v, k) for k, v in vect.vocabulary_.items())
 
 ##################
+# PART 2
 
 # Use the gensim.models.ldamodel.LdaModel constructor to estimate 
 # LDA model parameters on the corpus, and save to the variable `ldamodel`
