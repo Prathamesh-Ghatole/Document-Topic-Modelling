@@ -1,4 +1,3 @@
-from tkinter.font import names
 import gensim
 from sklearn.feature_extraction.text import CountVectorizer
 
