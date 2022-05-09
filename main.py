@@ -15,7 +15,7 @@ from rich.theme import Theme
 from rich.pretty import pprint
 
 custom_theme = Theme({
-    "info": "dim white",
+    "info": "white",
     "warning": "bold magenta",
     "danger": "bold red",
     "success": "bold green"
