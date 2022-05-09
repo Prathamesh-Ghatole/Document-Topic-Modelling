@@ -1,75 +1,74 @@
-import pandas as pd
-import numpy as np
-import colorama
 import pickle
-import gensim
-from sklearn.feature_extraction.text import CountVectorizer
+import time
+from random import random
 
-# Importing custom library functions
-from lib.functions import *
+#importing our custom library.
+import model
 
-###################
-# PART 1: Load Data from pickle, 
+#######################
+# Setting up Rich for pretty printing!
 
-# Load the list of documents
+from rich import print
+from rich.console import Console
+from rich.columns import Columns
+from rich.theme import Theme
+from rich.pretty import pprint
+
+custom_theme = Theme({
+    "info": "dim white",
+    "warning": "bold magenta",
+    "danger": "bold red",
+    "success": "bold green"
+})
+
+console = Console(theme=custom_theme)
+console.clear()
+######################
+
 with open('data/newsgroups', 'rb') as f:
     newsgroup_data = pickle.load(f)
 
-# Use CountVectorizor to find three letter tokens, remove stop_words, 
-# remove tokens that don't appear in at least 20 documents,
-# remove tokens that appear in more than 20% of the documents
-vect = CountVectorizer(min_df=20, max_df=0.2, stop_words='english', 
-                       token_pattern='(?u)\\b\\w\\w\\w+\\b')
-# Fit and transform
-X = vect.fit_transform(newsgroup_data)
+time.sleep(0.3)
+console.print("Training Data loaded!\n", style="success")
 
-# Convert sparse matrix to gensim corpus.
-corpus = gensim.matutils.Sparse2Corpus(X, documents_columns=False)
+char_count = 0
+for item in newsgroup_data:
+    char_count += len(item)
 
-# Mapping from word IDs to words (To be used in LdaModel's id2word parameter)
-id_map = dict((v, k) for k, v in vect.vocabulary_.items())
+# Using our custom library function to preprocess the data 
+# and fetch the main corpus, mapping from word IDs to words (To be used in LdaModel's id2word parameter)
 
-##################
-# PART 2
+corpus, name_id_map = model.pre_process(newsgroup_data)
 
-# Use the gensim.models.ldamodel.LdaModel constructor to estimate 
-# LDA model parameters on the corpus, and save to the variable `ldamodel`
+console.print("Finished PreProcessing!\n", style="success")
+console.print("\tNumber of corpora = {}\n\tTotal number of characters = {}\n".format(len(newsgroup_data), char_count), style="info")
 
-# Your code here:
-ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=10, id2word=id_map, passes=25, random_state=34)
 
-#################
+with console.status("Training the Model\n") as stat:
+    trained_model, training_log = model.train(
+        corpus=corpus, 
+        num_topics=10, 
+        id2word=name_id_map, 
+        passes = 25, 
+        random_state = 34)
 
-def lda_topics():
-    
-    return list(ldamodel.show_topics(num_topics=10, num_words=10))
+console.print("training successful!", style="success")
+console.print(training_log, style="info")
 
-lda_topics()
+# topic_map = model.autoname_topics(trained_model)
+topic_map = model.gen_topic_map(10)
 
-#################
+# pprint(topic_map)
+# for topic, prob in topics.items():
+#     console.print("topic:", topic)
+#     kw_p_pair = [item for item in prob.split("+")]
+#     kw_p_pair_2 = [tuple(map(lambda x: x.strip(), (item.split('*')))) for item in kw_p_pair]
+#     pprint(kw_p_pair_2)
 
-new_doc = ["\n\nIt's my understanding that the freezing will start to occur because \
-of the\ngrowing distance of Pluto and Charon from the Sun, due to it's\nelliptical orbit. \
-It is not due to shadowing effects. \n\n\nPluto can shadow Charon, and vice-versa.\n\nGeorge \
-Krumins\n-- "]
+console.print("Enter a string of text to identify it's topic!:", style="warning")
+inp = console.input("\n")
+print("\n")
+# pprint(model.test_topic_distribution(inp, trained_model, topic_map))
 
-################
-
-def topic_distribution():
-    
-    sparse_doc = vect.transform(new_doc)
-    gen_corpus = gensim.matutils.Sparse2Corpus(sparse_doc, documents_columns=False)
-    return list(ldamodel[gen_corpus])[0] # It's a list of lists! You just want the first one.
-    #return list(ldamodel.show_topics(num_topics=10, num_words=10)) # For topic_names
-
-topic_distribution()
-
-#################
-
-# Manually assign labels based on most important features and most important words in them:
-# Assigning labels manually for the first step in supervised learning.
-def topic_names():
-    
-    return ['Education','Science','Computers & IT','Religion','Automobiles','Sports','Science','Religion','Computers & IT','Science']
-
-#################
+for topic in model.test_topic_distribution(inp, trained_model, topic_map):
+    console.print("[bold]Topic[/bold]: [green]{}[/green]\n[bold]Probability[/bold]: [green]{}[/green]".format(topic[0], topic[1]), style="info")
