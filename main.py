@@ -1,6 +1,5 @@
 import pickle
 import time
-from random import random
 
 #importing our custom library.
 import model
@@ -65,10 +64,15 @@ topic_map = model.gen_topic_map(10)
 #     kw_p_pair_2 = [tuple(map(lambda x: x.strip(), (item.split('*')))) for item in kw_p_pair]
 #     pprint(kw_p_pair_2)
 
-console.print("Enter a string of text to identify it's topic!:", style="warning")
-inp = console.input("\n")
-print("\n")
-# pprint(model.test_topic_distribution(inp, trained_model, topic_map))
+inp = "0000"
+#Iniializing inp
 
-for topic in model.test_topic_distribution(inp, trained_model, topic_map):
-    console.print("[bold]Topic[/bold]: [green]{}[/green]\n[bold]Probability[/bold]: [green]{}[/green]".format(topic[0], topic[1]), style="info")
+while (inp != ""):
+    console.print("Enter a string of text to identify it's topic!\nLeave Blank to terminate the program:", style="warning")
+    inp = console.input("\n")
+    print("\n")
+    # pprint(model.test_topic_distribution(inp, trained_model, topic_map))
+
+    for topic in model.test_topic_distribution(inp, trained_model, topic_map):
+
+        console.print("[bold]Topic[/bold]: [green]{}[/green]\n[bold]Probability[/bold]: [green]{}[/green]".format(topic[0], topic[1]), style="info")
