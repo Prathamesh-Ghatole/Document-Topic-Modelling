@@ -24,7 +24,7 @@ console = Console(theme=custom_theme)
 console.clear()
 ######################
 
-with open('data/newsgroups', 'rb') as f:
+with open('Data/newsgroups', 'rb') as f:
     newsgroup_data = pickle.load(f)
 
 time.sleep(0.3)
