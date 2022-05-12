@@ -73,6 +73,9 @@ while (inp != ""):
     print("\n")
     # pprint(model.test_topic_distribution(inp, trained_model, topic_map))
 
+    if inp == "":
+        break
+    
     for topic in model.test_topic_distribution(inp, trained_model, topic_map):
 
         console.print("\n[bold]Topic[/bold]: [green]{}[/green]\n[bold]Probability[/bold]: [green]{}[/green]".format(topic[0], topic[1]), style="info")
