@@ -1,4 +1,7 @@
-# Repository under construction!
+# Document Topic Modelling
+A simple interactive commandline utility to classify text into pre-defined topics using Machine Learning (NLP). This project is based on the LDA (Latent Dirichlet Allocation) model, and built using Python, Scikit-learn, and Gensim.
+
+![image](https://user-images.githubusercontent.com/77586602/213287040-b13d88c9-645d-45dc-9bbb-7e403300eae6.png)
 
 Instructions:
 
